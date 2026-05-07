@@ -1,0 +1,54 @@
+{
+  "products": [
+    {
+      "id": "1",
+      "name": "Boneka Lucu anjay",
+      "price": 35000,
+      "description": "Boneka rajut berbentuk kelinci dengan warna pastel yang lembut. Dibuat handmade pakai benang yang halus dan nyaman. Cocok buat hadiah simpel atau sekadar jadi hiasan lucu di rumah, cocok juga buat koleksi.",
+      "size": "(15cm x 10cm)",
+      "material": "gatau nying",
+      "image": "/asset/foto2.jpeg",
+      "category": "Boneka"
+    },
+    {
+      "id": "2",
+      "name": "bunga pink pokok nya",
+      "price": 35000,
+      "description": "beli ini auto happy tiap hari cok",
+      "size": "(15cm x 10cm)",
+      "material": "kayu jati",
+      "image": "/asset/foto4.jpeg",
+      "category": "Bunga"
+    },
+    {
+      "id": "3",
+      "name": "ini juga bunga merah(minim foto)",
+      "price": 35000,
+      "description": "kasih buat pasangan lu cok",
+      "size": "15cm x 10cm)",
+      "material": "Beton",
+      "image": "/asset/foto5.jpeg",
+      "category": "Bunga"
+    },
+    {
+      "id": "4",
+      "name": "bunga merah lagi",
+      "price": 35000,
+      "description": "beli ini pokok nya!",
+      "size": "(15cm x 10cm)",
+      "material": "Baja",
+      "image": "/asset/foto7.jpeg",
+      "category": "Bunga"
+    },
+    {
+      "name": "Imut Imut",
+      "price": 35000,
+      "description": "beli ini anjay imut asli",
+      "size": "10mx35m",
+      "material": "semen",
+      "image": "/asset/foto3.jpeg",
+      "category": "Custom",
+      "id": "1778064795384"
+    }
+  ]
+}
