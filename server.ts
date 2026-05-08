@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
@@ -23,6 +26,22 @@ async function startServer() {
   app.use(express.json());
 
   // API Routes
+  // Login endpoint
+  app.post("/api/login", (req, res) => {
+    const { password } = req.body;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+
+    if (!adminPassword) {
+      return res.status(500).json({ error: "Server belum dikonfigurasi" });
+    }
+
+    if (password === adminPassword) {
+      res.json({ success: true });
+    } else {
+      res.status(401).json({ error: "Password salah" });
+    }
+  });
+
   app.get("/api/products", (req, res) => {
     try {
       const data = JSON.parse(fs.readFileSync(DB_FILE, "utf-8"));
