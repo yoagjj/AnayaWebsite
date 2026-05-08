@@ -39,6 +39,9 @@ export default function Admin() {
     image: "",
     category: "",
   });
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     fetchProducts();
@@ -77,6 +80,20 @@ export default function Admin() {
     }
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImageFile(file);
+
+    // Bikin preview gambar sebelum diupload
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("isAdminLoggedIn");
     setIsLoggedIn(false);
@@ -84,6 +101,33 @@ export default function Admin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    let imageUrl = formData.image || "";
+
+    // Kalau ada file baru dipilih, upload dulu ke Cloudinary
+    if (imageFile) {
+      setUploadingImage(true);
+      try {
+        const data = new FormData();
+        data.append("image", imageFile);
+
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: data,
+        });
+
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error);
+        imageUrl = result.url;
+      } catch (err) {
+        alert("Gagal upload gambar, coba lagi.");
+        setUploadingImage(false);
+        return;
+      }
+      setUploadingImage(false);
+    }
+
+    // Simpan produk dengan URL gambar
     const method = editingProduct ? "PUT" : "POST";
     const url = editingProduct
       ? `/api/products/${editingProduct.id}`
@@ -92,7 +136,7 @@ export default function Admin() {
     const res = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
+      body: JSON.stringify({ ...formData, image: imageUrl }),
     });
 
     if (res.ok) {
@@ -128,6 +172,8 @@ export default function Admin() {
   };
 
   const closeModal = () => {
+    setImageFile(null); // tambah ini
+    setImagePreview(""); // tambah ini
     setIsModalOpen(false);
     setEditingProduct(null);
   };
@@ -466,17 +512,41 @@ export default function Admin() {
                       className="w-full bg-neutral-50 border-none rounded-2xl p-4 text-sm outline-none focus:ring-1 focus:ring-brand-sage"
                     ></textarea>
                   </div>
-                  <div className="col-span-2 space-y-2">
-                    <label className="text-[10px] uppercase tracking-widest font-bold text-brand-brown/40">
-                      Image URL
+                  {/* Upload Gambar */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Gambar Produk
                     </label>
+
+                    {/* Preview gambar */}
+                    {(imagePreview || formData.image) && (
+                      <img
+                        src={imagePreview || formData.image}
+                        alt="Preview"
+                        className="w-full h-40 object-cover rounded-lg mb-2"
+                      />
+                    )}
+
+                    {/* Input file */}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100"
+                    />
+
+                    {/* Atau pakai URL manual */}
+                    <p className="text-xs text-gray-400 mt-2 mb-1">
+                      atau pakai URL gambar:
+                    </p>
                     <input
                       type="text"
-                      value={formData.image}
+                      placeholder="https://..."
+                      value={imagePreview ? "" : formData.image || ""}
                       onChange={(e) =>
                         setFormData({ ...formData, image: e.target.value })
                       }
-                      className="w-full bg-neutral-50 border-none rounded-2xl p-4 text-sm outline-none focus:ring-1 focus:ring-brand-sage"
+                      className="w-full border rounded-lg px-3 py-2 text-sm"
                     />
                   </div>
                 </div>
@@ -491,11 +561,16 @@ export default function Admin() {
                 </button>
                 <button
                   onClick={(e) => handleSubmit(e as any)}
-                  className="px-10 py-4 bg-brand-brown text-white rounded-full text-xs uppercase tracking-widest font-bold hover:bg-brand-sage transition-all shadow-xl shadow-brand-brown/10 flex items-center space-x-2"
+                  disabled={uploadingImage}
+                  className="px-10 py-4 bg-brand-brown text-white rounded-full text-xs uppercase tracking-widest font-bold hover:bg-brand-sage transition-all shadow-xl shadow-brand-brown/10 flex items-center space-x-2 disabled:opacity-50"
                 >
                   <Check className="w-4 h-4" />
                   <span>
-                    {editingProduct ? "Save Changes" : "Create Product"}
+                    {uploadingImage
+                      ? "Mengupload..."
+                      : editingProduct
+                        ? "Save Changes"
+                        : "Create Product"}
                   </span>
                 </button>
               </div>
