@@ -132,6 +132,8 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(__dirname, "dist");
+    const assetPath = path.join(__dirname, "asset"); //
+    app.use("/asset", express.static(assetPath)); //
     app.use(express.static(distPath));
     app.get("*", (req, res) => {
       res.sendFile(path.join(distPath, "index.html"));
