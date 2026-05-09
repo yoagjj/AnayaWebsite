@@ -1,9 +1,38 @@
+import { useState } from "react";
 import { motion } from "motion/react";
 import { MessageCircle, Instagram, Mail, MapPin } from "lucide-react";
 import { WHATSAPP_NUMBER } from "../constants";
 
 export default function Contact() {
+  const [nama, setNama] = useState("");
+  const [pesan, setPesan] = useState("");
+
   const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=Halo Anaya! Saya ingin bertanya tentang produk Anda.`;
+  const handleKirim = () => {
+    if (!nama.trim() || !pesan.trim()) {
+      alert("Mohon isi nama dan pesan terlebih dahulu.");
+      return;
+    }
+
+    const text = `Halo Anaya! 
+
+━━━━━━━━━━━━━━━
+ *PESAN BARU*
+━━━━━━━━━━━━━━━
+
+*Nama:* ${nama}
+
+*Pesan:*
+${pesan}
+
+━━━━━━━━━━━━━━━
+_Dikirim melalui website Anaya_`;
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+    window.open(url, "_blank");
+
+    setNama("");
+    setPesan("");
+  };
 
   return (
     <div className="pt-40 pb-24 px-6 bg-brand-cream">
@@ -118,14 +147,21 @@ export default function Contact() {
                 <input
                   type="text"
                   placeholder="Nama Lengkap"
+                  value={nama}
+                  onChange={(e) => setNama(e.target.value)}
                   className="w-full bg-brand-cream/50 border-none rounded-2xl p-5 text-sm outline-none focus:ring-1 focus:ring-brand-sage text-brand-brown"
                 />
                 <textarea
                   rows={4}
                   placeholder="Pesan Anda..."
+                  value={pesan}
+                  onChange={(e) => setPesan(e.target.value)}
                   className="w-full bg-brand-cream/50 border-none rounded-2xl p-5 text-sm outline-none focus:ring-1 focus:ring-brand-sage text-brand-brown"
                 ></textarea>
-                <button className="w-full py-5 rounded-full border border-brand-brown/10 text-brand-brown text-xs uppercase tracking-widest hover:bg-brand-brown hover:text-white transition-all duration-500">
+                <button
+                  onClick={handleKirim}
+                  className="w-full py-5 rounded-full border border-brand-brown/10 text-brand-brown text-xs uppercase tracking-widest hover:bg-brand-brown hover:text-white transition-all duration-500"
+                >
                   Kirim Pesan
                 </button>
               </div>

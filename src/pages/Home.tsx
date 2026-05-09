@@ -105,7 +105,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
             {products.map((product, index) => (
               <ProductCard key={product.id} product={product} index={index} />
             ))}
